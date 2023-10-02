@@ -10,11 +10,8 @@ https://github.com/mgrmtech/fidelius-cli/releases
 
 ## Python lib
 
-https://github.com/AntonKueltz/fastecdsa#id8
+`pip install git+https://github.com/dimagi/pyfidelius@mvp2`
 
-`
-pip install fastecdsa
-`
 # Test Code
 Run the test using
 

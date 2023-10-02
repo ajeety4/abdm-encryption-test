@@ -18,33 +18,26 @@
 
 # TODO Generate Curve Parameters using reference from Bouncy Castle
 
-name = 'CustomCurve25519'
-p = None
-a = None
-b = None
-q = None
-gx = None
-gy = None
-oid = None
+# name = 'CustomCurve25519'
+# p = None
+# a = None
+# b = None
+# q = None
+# gx = None
+# gy = None
+# oid = None
 
 # Create Custom Curve
-from fastecdsa.curve import Curve
-curve = Curve(
-    name,  # (str): The name of the curve
-    p,  # (long): The value of p in the curve equation.
-    a,  # (long): The value of a in the curve equation.
-    b,  # (long): The value of b in the curve equation.
-    q,  # (long): The order of the base point of the curve.
-    gx,  # (long): The x coordinate of the base point of the curve.
-    gy,  # (long): The y coordinate of the base point of the curve.
-    oid  # (str): The object identifier of the curve (optional).
-)
-
-# TODO Create keys using above curve
-# TODO Encryption logic
-# TODO Decryption logic
-# TODO Use the test `test_python_custom_curve` for testing the logic
-
+# from fastecdsa.curve import Curve
+# curve = Curve(
+#     name,  # (str): The name of the curve
+#     p,  # (long): The value of p in the curve equation.
+#     a,  # (long): The value of a in the curve equation.
+#     b,  # (long): The value of b in the curve equation.
+#     q,  # (long): The order of the base point of the curve.
+#     gx,  # (long): The x coordinate of the base point of the curve.
+#     gy,  # (long): The y coordinate of the base point of the curve.
+#     oid  # (str): The object identifier of the curve (optional).
 
 
 # Below is sample Interface that python util should support from the custom curve created in python
@@ -55,12 +48,22 @@ class PythonCustomCurve25519:
 
     @staticmethod
     def get_key_material():
-        raise NotImplementedError
+        from fidelius import KeyMaterial
+        key_material = KeyMaterial.generate()
+        return {
+            "publicKey": key_material.public_key,
+            "privateKey": key_material.private_key,
+            "nonce": key_material.nonce,
+            "x509PublicKey": key_material.x509_public_key,
+        }
 
     @staticmethod
     def encrypt_data(encryption_params):
-        raise NotImplementedError
+        from fidelius import CryptoController
+        return CryptoController.encrypt(encryption_params)
+
 
     @staticmethod
     def decrypt_data(decryption_params):
-        raise NotImplementedError
+        from fidelius import CryptoController
+        return CryptoController.decrypt(decryption_params)

@@ -27,11 +27,11 @@ class TestPythonCustomCurve25519(unittest.TestCase):
         # Encrypt using Python Util
         sender_key_material = PythonCustomCurve25519.get_key_material()
         encryption_params = {
-            "stringToEncrypt": string_to_encrypt,
-            "senderNonce": sender_key_material["nonce"],
-            "requesterNonce": requester_key_material["nonce"],
-            "senderPrivateKey": sender_key_material["privateKey"],
-            "requesterPublicKey": requester_key_material["publicKey"]
+            "string_to_encrypt": string_to_encrypt,
+            "sender_nonce": sender_key_material["nonce"],
+            "requester_nonce": requester_key_material["nonce"],
+            "sender_private_key": sender_key_material["privateKey"],
+            "requester_public_key": requester_key_material["publicKey"]
         }
         encrypted_data = PythonCustomCurve25519.encrypt_data(encryption_params)
 
@@ -44,7 +44,7 @@ class TestPythonCustomCurve25519(unittest.TestCase):
             "senderPublicKey": sender_key_material["publicKey"]
         }
         decrypted_data = decryptData(decryption_params)
-        assert string_to_encrypt == decrypted_data
+        assert string_to_encrypt == decrypted_data['decryptedData']
 
     def test_decryption(self):
         """Test by encrypting using fidelius cli and decryption using Python Util """
@@ -66,17 +66,17 @@ class TestPythonCustomCurve25519(unittest.TestCase):
 
         # Decrypt using Fidelius CLI
         decryption_params = {
-            "encryptedData": encrypted_data,
-            "requesterNonce": requester_key_material["nonce"],
-            "senderNonce": sender_key_material["nonce"],
-            "requesterPrivateKey": requester_key_material["privateKey"],
-            "senderPublicKey": sender_key_material["publicKey"]
+            "encrypted_data": encrypted_data['encryptedData'],
+            "requester_nonce": requester_key_material["nonce"],
+            "sender_nonce": sender_key_material["nonce"],
+            "requester_private_key": requester_key_material["privateKey"],
+            "sender_public_key": sender_key_material["publicKey"]
         }
         decrypted_data = PythonCustomCurve25519.decrypt_data(decryption_params)
         assert string_to_encrypt == decrypted_data
 
     def test_encryption_x509(self):
-        """Test by encrypting using python and decryption using fidelius cli"""
+        """Test by encrypting using python and decryption using fidelius cli using x509 public key"""
         string_to_encrypt = "This should be kept secret at all cost"
 
         # Requester is peer who shared his public key (Fidelius CLI)
@@ -85,11 +85,11 @@ class TestPythonCustomCurve25519(unittest.TestCase):
         # Encrypt using Python Util
         sender_key_material = PythonCustomCurve25519.get_key_material()
         encryption_params = {
-            "stringToEncrypt": string_to_encrypt,
-            "senderNonce": sender_key_material["nonce"],
-            "requesterNonce": requester_key_material["nonce"],
-            "senderPrivateKey": sender_key_material["privateKey"],
-            "requesterPublicKey": requester_key_material["x509PublicKey"]
+            "string_to_encrypt": string_to_encrypt,
+            "sender_nonce": sender_key_material["nonce"],
+            "requester_nonce": requester_key_material["nonce"],
+            "sender_private_key": sender_key_material["privateKey"],
+            "requester_public_key": requester_key_material["x509PublicKey"]
         }
         encrypted_data = PythonCustomCurve25519.encrypt_data(encryption_params)
 
@@ -105,7 +105,7 @@ class TestPythonCustomCurve25519(unittest.TestCase):
         assert string_to_encrypt == decrypted_data
 
     def test_decryption_x509(self):
-        """Test by encrypting using fidelius cli and decryption using Python Util """
+        """Test by encrypting using fidelius cli and decryption using Python Util using x509 public key"""
         string_to_encrypt = "This should be kept secret at all cost"
 
         # Requester is peer who shared his public key (Python util)
@@ -113,22 +113,26 @@ class TestPythonCustomCurve25519(unittest.TestCase):
 
         # Encrypt using Python Util
         sender_key_material = getEcdhKeyMaterial()
+
+        # Expecting x509PublicKey in base64 format
+        # requester_key_material["x509PublicKey"] = (base64.b64encode(requester_key_material["x509PublicKey"])).decode()
+
         encryption_params = {
             "stringToEncrypt": string_to_encrypt,
             "senderNonce": sender_key_material["nonce"],
             "requesterNonce": requester_key_material["nonce"],
             "senderPrivateKey": sender_key_material["privateKey"],
-            "requesterPublicKey": requester_key_material["x509PublicKey"]
+            "requesterPublicKey": requester_key_material["x509PublicKey"] 
         }
         encrypted_data = encryptData(encryption_params)
 
         # Decrypt using Fidelius CLI
         decryption_params = {
-            "encryptedData": encrypted_data,
-            "requesterNonce": requester_key_material["nonce"],
-            "senderNonce": sender_key_material["nonce"],
-            "requesterPrivateKey": requester_key_material["privateKey"],
-            "senderPublicKey": sender_key_material["x509PublicKey"]
+            "encrypted_data": encrypted_data['encryptedData'],
+            "requester_nonce": requester_key_material["nonce"],
+            "sender_nonce": sender_key_material["nonce"],
+            "requester_private_key": requester_key_material["privateKey"],
+            "sender_public_key": sender_key_material["x509PublicKey"]
         }
         decrypted_data = PythonCustomCurve25519.decrypt_data(decryption_params)
         assert string_to_encrypt == decrypted_data
